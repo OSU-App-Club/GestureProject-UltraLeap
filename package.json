@@ -26,6 +26,5 @@
     },
     "workspaces": [
         "TouchFree/TF_Tooling_Web"
-    ],
-    "private": true
+    ]
 }

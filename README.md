@@ -11,7 +11,7 @@
 ## Clone
 
 ```bash
-git clone --recursive https://github.com/osuapp/ultraleap.git
+git clone --recursive https://github.com/OSU-App-Club/GestureProject-UltraLeap.git
 git submodule update --init --recursive
 ```
 
