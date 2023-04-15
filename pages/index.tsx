@@ -2,10 +2,45 @@ import Head from 'next/head'
 import Image from 'next/image'
 import { Inter } from 'next/font/google'
 import styles from '@/styles/Home.module.css'
+import { useEffect, useRef, useState } from 'react';
 
 const inter = Inter({ subsets: ['latin'] })
 
+let initialized = false;
+
 export default function Home() {
+  useEffect(() => {
+    if (initialized) return;
+    initialized = true;
+
+    console.log('Component initialized');
+
+    getData();
+  }, []);
+
+  async function getData() {
+    console.log('Sending data');
+
+    const options = {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            pinCode: '123456',
+            data: {
+              "gesture": "rock"
+            }
+        })
+    };
+    const ret = await fetch(
+        '/api/senddata',
+        options
+    );
+    const out = await ret.json();
+    console.log(out);
+  }
+
   return (
     <>
       <Head>
