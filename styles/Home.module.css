@@ -48,3 +48,25 @@
   transition: 0.1s;
   transform: translateY(1vh);
 }
+
+.disconnect {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 9999;
+  background-color: white;
+  /* padding */
+  padding: 10px;
+}
+
+.connectionLost {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #fff;
+  border: 2px solid #ccc;
+  padding: 16px;
+  text-align: center;
+  z-index: 9999;
+}
