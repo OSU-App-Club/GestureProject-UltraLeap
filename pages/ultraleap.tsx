@@ -140,8 +140,8 @@ export default function Home() {
     const data = {
       x: Math.round(evt.CursorPosition[0]),
       y: Math.round(evt.CursorPosition[1]),
-      width: window.innerWidth,
-      heigth: window.innerHeight,
+      width: screen.width,
+      height: screen.height,
       gesture: interactionType,
       inputType,
       hand: evt.Chirality == HandChirality.LEFT ? 'left': 'right',
