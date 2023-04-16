@@ -6,6 +6,8 @@ import TouchFree from "TouchFree/src/TouchFree";
 import {
   InputType,
   TouchFreeInputAction,
+  InteractionType,
+  HandChirality
 } from "TouchFree/src/TouchFreeToolingTypes";
 import { useEffect, useRef, useState } from "react";
 
@@ -23,6 +25,7 @@ const colors: string[] = [
 ];
 
 let initialized = false;
+let lastData = {};
 
 export default function Home() {
   const [progressToClick, setProgressToClick] = useState<number>(0);
@@ -34,20 +37,19 @@ export default function Home() {
     if (!initialized) {
       initialized = true;
       console.log('Component initialized');
-      // sendData();
+    }
 
-      TouchFree.Init({ initialiseCursor: false });
-      addTouchFreeCursor();
+    TouchFree.Init({ initialiseCursor: false });
+    addTouchFreeCursor();
 
-      const inputHandler = TouchFree.RegisterEventCallback(
-        "TransmitInputAction",
-        handleTFInput
-      );
+    const inputHandler = TouchFree.RegisterEventCallback(
+      "TransmitInputAction",
+      handleTFInput
+    );
 
-      return () => {
-        inputHandler.UnregisterEventCallback();
-      };
-    }    
+    return () => {
+      inputHandler.UnregisterEventCallback();
+    };
   }, []);
 
   const handleTFInput = (evt: TouchFreeInputAction): void => {
@@ -58,9 +60,49 @@ export default function Home() {
       setProgressToClick(prog ? prog : 0);
     }
 
-    console.log('Input action:');
-    console.log(inputAction)
-    // TODO: should listen for MOVE action ( found from TouchFree/TF_Tooling_Web/src/Cursors/DotCursor.ts line 95 function HandleInputAction() ) and send the data
+    // should listen for MOVE action ( found from TouchFree/TF_Tooling_Web/src/Cursors/DotCursor.ts line 95 function HandleInputAction() ) and send the data
+    let interactionType = '';
+    if(evt.InteractionType == InteractionType.GRAB) {
+      interactionType = 'grab';
+    } else if(evt.InteractionType == InteractionType.HOVER) {
+      interactionType = 'hover';
+    } else if(evt.InteractionType == InteractionType.PUSH) {
+      interactionType = 'push';
+    } else if(evt.InteractionType == InteractionType.TOUCHPLANE) {
+      interactionType = 'touchplane';
+    } else if(evt.InteractionType == InteractionType.VELOCITYSWIPE) {
+      interactionType = 'velocityswipe';
+    }
+    
+    let inputType;
+    if (inputAction !== InputType.NONE) {
+      inputType = 'none';
+    } else if (inputAction !== InputType.CANCEL) {
+      inputType = 'cancel';
+    } else if (inputAction !== InputType.DOWN) {
+      inputType = 'down';
+    } else if (inputAction !== InputType.MOVE) {
+      inputType = 'move';
+    } else if (inputAction !== InputType.UP) {
+      inputType = 'up';
+    }
+
+    const data = {
+      x: Math.round(evt.CursorPosition[0]),
+      y: Math.round(evt.CursorPosition[1]),
+      width: window.innerWidth,
+      heigth: window.innerHeight,
+      gesture: interactionType,
+      inputType,
+      hand: evt.Chirality == HandChirality.LEFT ? 'left': 'right',
+      distanceFromScreen: Math.round(evt.DistanceFromScreen * 100)
+    }
+
+    if (JSON.stringify(data) != JSON.stringify(lastData)) {
+      lastData = data;
+      console.log(data);
+      sendData(data);
+    }
   };
 
   const addTouchFreeCursor = (): void => {
@@ -79,22 +121,19 @@ export default function Home() {
       return c;
     };
 
-    // increased the size of the cursor from 80 to 100
-    const cursor = createCursor(100, "1002");
-    // create a ring b/c it's required by DotCursor
+    const cursor = createCursor(80, "1002");
     const cursorRing = createCursor(100, "1001");
 
     if (appRef.current) {
       appRef.current.appendChild(cursor);
-      // hide the ring
-      // appRef.current.appendChild(cursorRing);
+      appRef.current.appendChild(cursorRing);
     }
 
     new DotCursor(cursor, cursorRing);
   };
 
-  async function sendData() {
-    console.log('Sending data');
+  async function sendData(data: any) {
+    // console.log('Sending data');
 
     const options = {
         method: 'POST',
@@ -103,9 +142,7 @@ export default function Home() {
         },
         body: JSON.stringify({
             pinCode: '123456',
-            data: {
-              "gesture": "rock"
-            }
+            data
         })
     };
     const ret = await fetch(
