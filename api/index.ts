@@ -1,4 +1,4 @@
-import { connect, disconnect, produce } from './kafkaProduce.ts';
+import { connect, disconnect, produce } from './kafka.ts';
 import { Server as WebSocketServer, WebSocket } from 'ws';
 
 main();
@@ -34,7 +34,7 @@ function main() {
         // Do something with the pin parameter
         console.log('Received pinCode parameter:', pinCode);
 
-        await disconnect();
+        disconnect();
         await connect();
 
         // Listen for WebSocket messages
@@ -47,7 +47,7 @@ function main() {
         // Listen for WebSocket close events
         ws.on('close', async () => {
             console.log('Client disconnected');
-            await disconnect();
+            disconnect();
         });
     });
 }
