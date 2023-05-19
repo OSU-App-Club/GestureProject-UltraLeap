@@ -39,10 +39,12 @@ export const connect = async (): Promise<void> => {
 };
 
 export const disconnect = () => {
-    producer.flush(10000, () => {
-        producer.disconnect();
-    });
-    console.log('Disconnected from Kafka');
+    try {
+        producer.flush(10000, () => {
+            producer.disconnect();
+        });
+        console.log('Disconnected from Kafka');
+    } catch (e) {}
 };
 
 export const produce = (key: string | undefined | null, value: string) => {

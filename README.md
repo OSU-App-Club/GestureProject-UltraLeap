@@ -2,6 +2,7 @@
 
 ## Pre-reqs
 
+-   Install Ultraleap Gemini tracking software: https://developer.leapmotion.com/tracking-software-download
 -   Install Ultraleap TouchFree: https://developer.leapmotion.com/touchfree#download-touchfree
 
 ## References
