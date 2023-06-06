@@ -40,7 +40,7 @@ function main() {
         // Listen for WebSocket messages
         ws.on('message', (message: any) => {
             const messageString = message.toString();
-            console.log('Received message:', messageString);
+            // console.log('Received message:', messageString);
             produce(pinCode, messageString);
         });
 

@@ -26,6 +26,7 @@ const colors: string[] = [
 ];
 
 let lastData = {};
+let count = 0;
 
 export default function Home() {
     const router = useRouter();
@@ -149,8 +150,13 @@ export default function Home() {
 
         if (JSON.stringify(data) != JSON.stringify(lastData)) {
             lastData = data;
-            console.log(data);
-            sendData(data);
+
+            count++;
+            if (count >= 2) {
+                count = 0;
+                console.log(data);
+                sendData(data);
+            }
         }
     };
 
